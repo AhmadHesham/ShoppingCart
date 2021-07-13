@@ -2,6 +2,7 @@ import express from "express";
 import Cart from "./routes/api/Cart";
 import Item from "./routes/api/Item";
 import mongoose from "mongoose";
+import cors from "cors";
 
 require("dotenv").config();
 mongoose
@@ -14,6 +15,7 @@ mongoose
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 app.use("/api/item", Item);
 app.use("/api/cart", Cart);
 

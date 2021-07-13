@@ -1,7 +1,9 @@
-import express from "express";
+import express from "express"
 import Cart from "../../models/Cart";
+import cors from 'cors';
 
 const router = express.Router();
+router.use(cors());
 
 router.post("/addItemToCart", async (req, res) => {
 	const { cartID, item } = req.body;

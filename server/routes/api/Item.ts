@@ -1,5 +1,4 @@
 import express from "express";
-//import mongoose from 'mongoose';
 import Item from "../../models/Item";
 
 const router = express.Router();
