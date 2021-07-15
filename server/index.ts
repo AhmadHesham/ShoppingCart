@@ -1,10 +1,12 @@
 import express from "express";
 import Cart from "./routes/api/Cart";
 import Item from "./routes/api/Item";
+import Coupon from "./routes/api/Coupon";
 import mongoose from "mongoose";
 import cors from "cors";
 
 require("dotenv").config();
+
 mongoose
 	.connect(process.env.mongoURI!, {
 		useNewUrlParser: true,
@@ -18,6 +20,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/api/item", Item);
 app.use("/api/cart", Cart);
+app.use("/api/coupon", Coupon);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () =>

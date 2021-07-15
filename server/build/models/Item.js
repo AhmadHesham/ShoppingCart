@@ -15,4 +15,4 @@ const ItemSchema = new Schema({
         required: true,
     },
 });
-exports.default = mongoose_1.default.model('item', ItemSchema);
+exports.default = mongoose_1.default.model("item", ItemSchema);

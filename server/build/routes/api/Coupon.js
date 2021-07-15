@@ -13,23 +13,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const Cart_1 = __importDefault(require("../../models/Cart"));
-const cors_1 = __importDefault(require("cors"));
+const Coupon_1 = __importDefault(require("../../models/Coupon"));
 const router = express_1.default.Router();
-router.use(cors_1.default());
-router.post("/addItemToCart", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { itemID } = req.body;
-    const newItem = {
-        itemID,
-    };
-    Cart_1.default.create(newItem)
-        .then((_) => res.send({ msg: "Item Added Successfully!", code: 200 }))
-        .catch((err) => res.send({ msg: "Error!", code: 500 }));
+router.post("/check", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { code } = req.body;
+    yield Coupon_1.default.findById(code).then(queryRes => {
+        if (queryRes) {
+            res.send({ msg: "Coupon Found!", data: queryRes });
+        }
+        else {
+            res.send({ msg: "Coupon Not Found!", data: null });
+        }
+    });
 }));
-router.get("/", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //const {cartID} = req.body;
-    //const cart = Cart.findById(cartID);
-    const cart = Cart_1.default.find();
-    res.send({ msg: "Cart Found!", data: cart });
+router.post("/addCoupon", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { code, value, flatValue } = req.body;
+    const coupon = new Coupon_1.default({
+        _id: code,
+        value: value,
+        flatValue: flatValue
+    });
+    yield Coupon_1.default.create(coupon).then(_ => res.send({ msg: "Coupon Created Successfully!" }));
 }));
 exports.default = router;
