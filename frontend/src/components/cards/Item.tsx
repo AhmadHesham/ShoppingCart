@@ -8,28 +8,37 @@ import {
   Button,
   CardActions,
 } from "@material-ui/core";
-import axios from 'axios';
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
+import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
 
 export interface ItemType {
-  _id: string,
+  _id: string;
   name: string;
   price: number;
 }
 
+export enum RenderType {
+  LANDING,
+  CART,
+}
+
 export interface ItemProps {
-  imageURL: string;
+  type: RenderType;
   item: ItemType;
-  handleOpen: (arg0: boolean, arg1: string, arg2: string) => void 
+  handleClick: (arg0: string) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      minWidth: "350px",
+      minWidth: "30%",
       minHeight: "200px",
+      maxWidth: "70%",
       marginRight: "3vw",
       marginBottom: "3vw",
+      [theme.breakpoints.down("sm")]: {
+        minWidth: "100%",
+      },
     },
     content: {
       display: "flex",
@@ -38,43 +47,39 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "column",
     },
     typo: {
-      display: 'inline-block'
-    }
+      display: "inline-block",
+    },
+    image: {
+      backgroundImage:
+        "url(https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-collection-2_large.png?format=webp&v=1530129132)",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      minHeight: "200px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      [theme.breakpoints.down("sm")]: {
+        minHeight: "150px",
+      },
+    },
   })
 );
 
 export default function Item(props: ItemProps): ReactElement | null {
   const classes = useStyles();
 
-  const handleAddToCart = () => {
-    axios({
-      url: 'http://localhost:3000/api/cart/addItemToCart',
-      method: 'POST',
-      data: {
-        itemID: props.item._id
-      }
-    })
-    .then(res => {
-      console.log(res);
-      props.handleOpen(true, res.data.msg, res.data.code === 200? "success" : "error");
-    })
-    .catch(_ => {
-      props.handleOpen(true, "An Error Occured", "error");
-    })
-  }
+  const handleAddToCart = () => {};
+
+  const handleClick = () => {
+    props.handleClick(props.item._id);
+  };
 
   return (
     <Card className={classes.root}>
-      <CardMedia
-        component="img"
-        height="40%"
-        image={`/frontend/src/images/${props.imageURL}.png`}
-        alt="Product Image"
-      />
+      <div className={classes.image} />
       <CardContent className={classes.content}>
-        <Typography 
-        className={classes.typo}
-        variant="body1">
+        <Typography className={classes.typo} variant="h5">
           {props.item.name}
         </Typography>
         <Typography
@@ -83,9 +88,15 @@ export default function Item(props: ItemProps): ReactElement | null {
         >{`Price: ${props.item.price}`}</Typography>
       </CardContent>
       <CardActions style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button onClick={handleAddToCart}>
-          <AddShoppingCartIcon />
-        </Button>
+        {props.type === RenderType.LANDING ? (
+          <Button onClick={handleAddToCart}>
+            <AddShoppingCartIcon />
+          </Button>
+        ) : (
+          <Button onClick={handleClick}>
+            <RemoveShoppingCartIcon color="error" />
+          </Button>
+        )}
       </CardActions>
     </Card>
   );

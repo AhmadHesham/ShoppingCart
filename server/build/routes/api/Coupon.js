@@ -17,7 +17,7 @@ const Coupon_1 = __importDefault(require("../../models/Coupon"));
 const router = express_1.default.Router();
 router.post("/check", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { code } = req.body;
-    yield Coupon_1.default.findById(code).then(queryRes => {
+    yield Coupon_1.default.findById(code).then((queryRes) => {
         if (queryRes) {
             res.send({ msg: "Coupon Found!", data: queryRes });
         }
@@ -31,8 +31,14 @@ router.post("/addCoupon", (req, res) => __awaiter(void 0, void 0, void 0, functi
     const coupon = new Coupon_1.default({
         _id: code,
         value: value,
-        flatValue: flatValue
+        flatValue: flatValue,
     });
-    yield Coupon_1.default.create(coupon).then(_ => res.send({ msg: "Coupon Created Successfully!" }));
+    yield Coupon_1.default.create(coupon).then((_) => res.send({ msg: "Coupon Created Successfully!" }));
+}));
+router.get("/redeem", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield Coupon_1.default.find().then((queryRes) => {
+        let index = Math.floor(Math.random() * queryRes.length);
+        res.send({ msg: "Coupon Redeemed!", data: queryRes[index] });
+    });
 }));
 exports.default = router;

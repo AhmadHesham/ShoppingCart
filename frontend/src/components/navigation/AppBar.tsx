@@ -19,6 +19,9 @@ const useStyles = makeStyles(() =>
       display: "flex",
       justifyContent: "flex-start",
     },
+    redirect: {
+      cursor: 'pointer'
+    }
   })
 );
 
@@ -30,11 +33,15 @@ export default function ButtonAppBar() {
     history.push("/cart");
   };
 
+  const handleHome = () => {
+    history.push("/");
+  }
+
   return (
     <AppBar className={classes.root} position="fixed">
       <Toolbar>
         <div className={classes.title}>
-          <Typography variant="h6">Market</Typography>
+          <Typography onClick={handleHome} className={classes.redirect} variant="h6">Market</Typography>
         </div>
         <div>
           <Button

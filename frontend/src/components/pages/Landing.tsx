@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { Theme, makeStyles, createStyles } from "@material-ui/core";
-import Item, { ItemType } from "../cards/Item";
+import Item, { ItemType, RenderType } from "../cards/Item";
 import axios from "axios";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+      marginTop: '1vw',
       [theme.breakpoints.down("sm")]: {
         flexDirection: "column",
         overflowY: "scroll",
@@ -37,29 +38,50 @@ export default function Landing(): ReactElement | null {
     setMessage(msg);
     setSeverity(sev);
   };
-  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     setOpen(false);
   };
 
-  React.useEffect(() => {
+  const handleClick = (itemID: string) => {
     axios({
-      url: "http://localhost:3000/api/item/",
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+      url: "http://localhost:3000/api/cart/addItemToCart",
+      method: "POST",
+      data: {
+        itemID,
       },
     })
       .then((res) => {
-        setState(res.data.data);
-        console.log(res.data.data);
+        console.log(res);
+        handleOpen(
+          true,
+          res.data.msg,
+          res.data.code === 200 ? "success" : "error"
+        );
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((_) => {
+        handleOpen(true, "An Error Occured", "error");
       });
+  };
+
+  React.useEffect(() => {
+    let loadItems = async () => {
+      await axios({
+        url: "http://localhost:3000/api/item/",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          setState(res.data.data);
+          console.log(res.data.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    loadItems();
   }, []);
 
   return (
@@ -67,14 +89,19 @@ export default function Landing(): ReactElement | null {
       {state.map((item, index) => {
         return (
           <Item
+            type={RenderType.LANDING}
             item={item}
             key={index}
-            imageURL={`placeholder_${index + 1}`}
-            handleOpen={handleOpen}
+            handleClick={handleClick}
           />
         );
       })}
-      <Snackbar TransitionProps={{appear: false}} open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar
+        TransitionProps={{ appear: false }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
         <Alert
           onClose={handleClose}
           severity={severity === "success" ? "success" : "error"}
