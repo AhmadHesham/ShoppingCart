@@ -127,9 +127,21 @@ export default function Cart(): ReactElement | null {
         if (res.data.data) {
           handleOpen(true, "Coupon Applied", "success");
           if (res.data.data.flatValue) {
-            setSum(sum - res.data.data.value);
+            let x = sum - res.data.data.value;
+            if(x > 0){
+              setSum(x);
+            }
+            else{
+              setSum(0);
+            }
           } else {
-            setSum(Number((sum - (sum * res.data.data.value) / 100).toFixed()));
+            let x = Number((sum - (sum * res.data.data.value) / 100).toFixed());
+            if(x > 0){
+              setSum(x);
+            }
+            else{
+              setSum(0);
+            }
           }
         } else {
           handleOpen(true, "Wrong Coupon Code", "error");
